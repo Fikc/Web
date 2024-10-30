@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Example with Auto Reload</title>
+    <script src="js/v2.6.10/vue.js"></script>
+    <script src="js/axios-0.18.0.js"></script>
+    <style>
+        video {
+            max-width: 100%; /* 让视频宽度适应屏幕 */
+            height: auto; /* 高度自适应 */
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <video v-if="vid" :src="vid" controls autoplay @ended="reloadVideo">
+            <source :src="vid" type="video/mp4">
+        </video>
+        <p v-else>视频加载中...</p>
+    </div>
+    <script>
+        new Vue({
+            el:"#app",
+            data: {
+                key: "251518e073ef6c3c9504dd286c3f6a86",
+                vid: ""  // 初始化为空
+            },
+            created() {
+                this.loadVideo();  // 页面加载时获取视频
+            },
+            methods: {
+                loadVideo() {
+                    axios({
+                        url: "https://api.kuleu.com/api/MP4_xiaojiejie?type=json",
+                        method: "get",
+                    }).then(res => {
+                        this.vid = res.data.mp4_video;  // 绑定新视频地址到 vid
+                        console.log(res.data.mp4_video);
+                    }).catch(error => {
+                        console.error("请求失败：", error);
+                    });
+                },
+                reloadVideo() {
+                    // 当视频播放完毕后重新获取新的视频
+                    this.loadVideo();
+                }
+            }
+        })
+    </script>
+</body>
+</html>
